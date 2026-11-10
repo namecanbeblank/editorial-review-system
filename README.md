@@ -42,4 +42,4 @@ The app binds to localhost and is intended for local experimentation. It has no 
 
 ## Status
 
-The engine and app build locally. The staged example workspace has been smoke-tested via the local API; further UI, content, security, and licensing review is needed before public release. Client workspaces, saved drafts, private reports, and credentials are not included.
+The engine and app build locally. The staged example workspace has been smoke-tested via the local API; further UI, content, security, and licensing review is needed before production use. Client workspaces, saved drafts, private reports, and credentials are not included.
