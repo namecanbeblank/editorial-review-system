@@ -1,0 +1,687 @@
+/* bofu-linter editor -- single hand-rolled stylesheet, no UI kit. */
+
+:root {
+  --bg: #ffffff;
+  --panel-bg: #fafaf9;
+  --border: #e3e1dd;
+  --text: #1a1a1a;
+  --text-muted: #6b6a66;
+  --accent: #2f5d4f;
+  --error: #c0392b;
+  --warn: #b8860b;
+  --info: #6b6a66;
+  --flash: rgba(255, 214, 89, 0.55);
+  font-family:
+    -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+  margin: 0;
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+}
+
+.app-shell {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+
+.app-main {
+  flex: 1;
+  display: grid;
+  grid-template-columns: 260px 1fr 360px;
+  min-height: 0;
+}
+
+/* ---- error banner ------------------------------------------------------------- */
+
+.error-banner {
+  background: #fdecea;
+  color: var(--error);
+  padding: 0.5rem 1rem;
+  font-size: 0.85rem;
+  cursor: pointer;
+  border-bottom: 1px solid #f4c7c2;
+}
+
+/* ---- left pane: client / article picker --------------------------------------- */
+
+.client-picker {
+  background: var(--panel-bg);
+  border-right: 1px solid var(--border);
+  padding: 1rem;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.field label {
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--text-muted);
+}
+
+.field select {
+  font-size: 0.9rem;
+  padding: 0.4rem 0.5rem;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  background: #fff;
+  color: var(--text);
+}
+
+.save-button {
+  font-size: 0.85rem;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid var(--accent);
+  border-radius: 4px;
+  background: var(--accent);
+  color: #fff;
+  cursor: pointer;
+}
+
+.save-button:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+
+/* ---- left pane: editable workspace / brief forms (Wave 3) ----------------------- */
+
+.collapsible {
+  border-top: 1px solid var(--border);
+  padding-top: 0.75rem;
+}
+
+.collapsible summary {
+  cursor: pointer;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.collapsible-body {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  margin-top: 0.6rem;
+}
+
+.field textarea,
+.field input[type="text"] {
+  font: inherit;
+  font-size: 0.85rem;
+  padding: 0.4rem 0.5rem;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  background: #fff;
+  color: var(--text);
+}
+
+.field textarea {
+  resize: vertical;
+  min-height: 3.2em;
+  line-height: 1.4;
+}
+
+.list-field {
+  gap: 0.35rem;
+}
+
+.list-row {
+  display: flex;
+  gap: 0.35rem;
+}
+
+.list-row input {
+  flex: 1;
+  min-width: 0;
+}
+
+.list-row button,
+.list-field > button,
+.glossary-row > button {
+  font-size: 0.72rem;
+  padding: 0.25rem 0.5rem;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  background: #fff;
+  color: var(--text-muted);
+  cursor: pointer;
+  align-self: flex-start;
+}
+
+.glossary-row {
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 0.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  margin-bottom: 0.4rem;
+}
+
+.workspace-form-save,
+.brief-form-save {
+  align-self: flex-start;
+  font-size: 0.8rem;
+  padding: 0.4rem 0.7rem;
+  border: 1px solid var(--accent);
+  border-radius: 4px;
+  background: var(--accent);
+  color: #fff;
+  cursor: pointer;
+}
+
+.workspace-form-save:disabled,
+.brief-form-save:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+
+.new-article-form {
+  border-top: 1px solid var(--border);
+  padding-top: 0.75rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.form-error {
+  color: var(--error);
+  font-size: 0.78rem;
+  margin: 0.25rem 0 0;
+}
+
+/* ---- center pane: editor -------------------------------------------------------- */
+
+.editor-pane {
+  min-width: 0;
+  overflow: hidden;
+  display: flex;
+}
+
+.bofu-editor {
+  flex: 1;
+  min-width: 0;
+}
+
+.bofu-editor .cm-editor {
+  height: 100%;
+}
+
+.editor-empty {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-muted);
+  font-size: 0.95rem;
+}
+
+/* underline decorations, by severity */
+.bofu-underline-error {
+  text-decoration: underline;
+  text-decoration-style: wavy;
+  text-decoration-color: var(--error);
+  text-decoration-thickness: 2px;
+  text-underline-offset: 3px;
+}
+
+.bofu-underline-warn {
+  text-decoration: underline;
+  text-decoration-style: wavy;
+  text-decoration-color: var(--warn);
+  text-decoration-thickness: 2px;
+  text-underline-offset: 3px;
+}
+
+.bofu-underline-info {
+  text-decoration: underline;
+  text-decoration-style: dotted;
+  text-decoration-color: var(--info);
+  text-decoration-thickness: 1.5px;
+  text-underline-offset: 3px;
+}
+
+/* Wave 2: llmp (paragraph LLM lane) findings -- SOLID underlines, same severity color
+   tokens as tier1 above, deliberately distinct style (solid vs. tier1's wavy/dotted). */
+.bofu-underline-llm-error {
+  text-decoration: underline;
+  text-decoration-style: solid;
+  text-decoration-color: var(--error);
+  text-decoration-thickness: 2px;
+  text-underline-offset: 3px;
+}
+
+.bofu-underline-llm-warn {
+  text-decoration: underline;
+  text-decoration-style: solid;
+  text-decoration-color: var(--warn);
+  text-decoration-thickness: 2px;
+  text-underline-offset: 3px;
+}
+
+.bofu-underline-llm-info {
+  text-decoration: underline;
+  text-decoration-style: solid;
+  text-decoration-color: var(--info);
+  text-decoration-thickness: 2px;
+  text-underline-offset: 3px;
+}
+
+.bofu-flash {
+  background: var(--flash);
+  border-radius: 2px;
+  transition: background 1.1s ease-out;
+}
+
+/* ---- right pane: tabs (Wave 3) --------------------------------------------------- */
+
+.right-pane {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  border-left: 1px solid var(--border);
+  background: var(--panel-bg);
+}
+
+.right-pane-tabs {
+  display: flex;
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+}
+
+.tab-button {
+  flex: 1;
+  padding: 0.6rem 0.5rem;
+  border: none;
+  background: transparent;
+  color: var(--text-muted);
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+}
+
+.tab-button.tab-active {
+  color: var(--text);
+  border-bottom-color: var(--accent);
+}
+
+.right-pane-body {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+}
+
+/* ---- right pane: findings sidebar ------------------------------------------------ */
+
+.sidebar {
+  background: var(--panel-bg);
+  overflow-y: auto;
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.review-group h3 {
+  margin: 0 0 0.6rem;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  color: var(--text-muted);
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.review-group h3 .count {
+  background: var(--border);
+  color: var(--text);
+  border-radius: 999px;
+  padding: 0.05rem 0.5rem;
+  font-size: 0.75rem;
+}
+
+/* Wave 2: "checking..." indicator on the Core review header while an /api/llmp
+   request is in flight. */
+.checking-indicator {
+  display: inline-block;
+  width: 0.7em;
+  height: 0.7em;
+  border-radius: 50%;
+  border: 2px solid var(--border);
+  border-top-color: var(--accent);
+  animation: bofu-spin 0.8s linear infinite;
+}
+
+@keyframes bofu-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.review-group .empty {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  margin: 0;
+}
+
+.finding-card {
+  display: block;
+  width: 100%;
+  text-align: left;
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 0.6rem 0.7rem;
+  margin-bottom: 0.5rem;
+  cursor: pointer;
+  font: inherit;
+}
+
+.finding-card:hover {
+  border-color: var(--accent);
+}
+
+.finding-card-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.3rem;
+}
+
+.finding-title {
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.finding-card-chips {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  flex-shrink: 0;
+}
+
+.chip {
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  padding: 0.1rem 0.4rem;
+  border-radius: 999px;
+  color: #fff;
+  flex-shrink: 0;
+}
+
+.chip-error {
+  background: var(--error);
+}
+
+.chip-warn {
+  background: var(--warn);
+}
+
+.chip-info {
+  background: var(--info);
+}
+
+/* Wave 2: mechanism chip (llmp/llmd findings) -- orthogonal to the severity chips
+   above, so it gets a distinct (non-severity) color. */
+.chip-llm {
+  background: var(--accent);
+}
+
+.finding-message {
+  margin: 0;
+  font-size: 0.8rem;
+  color: var(--text);
+  line-height: 1.4;
+}
+
+.finding-fix {
+  margin: 0.35rem 0 0;
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  line-height: 1.4;
+}
+
+/* ---- right pane: audit panel (Wave 3) -------------------------------------------- */
+
+.audit-panel {
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+}
+
+.audit-empty {
+  color: var(--text-muted);
+  font-size: 0.85rem;
+}
+
+.audit-run-button {
+  align-self: flex-start;
+  font-size: 0.85rem;
+  padding: 0.5rem 0.9rem;
+  border: 1px solid var(--accent);
+  border-radius: 4px;
+  background: var(--accent);
+  color: #fff;
+  cursor: pointer;
+}
+
+.audit-run-button:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+
+.audit-meta {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+}
+
+/* Wave 4: Audit tab "unsaved changes" notice -- shown while the editor text differs
+   from the last-saved draft (audits always run against what's on disk). */
+.audit-dirty-notice {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.4rem;
+  background: #fdf6e3;
+  border: 1px solid var(--warn);
+  border-radius: 4px;
+  padding: 0.6rem 0.75rem;
+}
+
+.audit-dirty-notice p {
+  margin: 0;
+  font-size: 0.82rem;
+  color: var(--text);
+}
+
+.audit-failed-state {
+  background: #fdecea;
+  color: var(--error);
+  border-radius: 4px;
+  padding: 0.6rem 0.75rem;
+  font-size: 0.85rem;
+}
+
+.priority-fixes h3 {
+  margin: 0 0 0.5rem;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  color: var(--text-muted);
+}
+
+.priority-fixes ol {
+  margin: 0;
+  padding-left: 1.2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.priority-fix-row {
+  font-size: 0.82rem;
+}
+
+.priority-fix-rank {
+  font-weight: 600;
+  margin-right: 0.3rem;
+}
+
+.priority-fix-dimension {
+  color: var(--text-muted);
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  margin-left: 0.3rem;
+}
+
+.priority-fix-action {
+  margin: 0.25rem 0;
+}
+
+.audit-dimensions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.audit-dimension-card {
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 0.6rem 0.7rem;
+  background: #fff;
+}
+
+.audit-dimension-head {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.3rem;
+}
+
+.audit-dimension-id {
+  font-size: 0.82rem;
+  font-weight: 600;
+}
+
+.audit-dimension-note {
+  margin: 0 0 0.4rem;
+  font-size: 0.8rem;
+  line-height: 1.4;
+}
+
+.verdict-chip {
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  padding: 0.1rem 0.45rem;
+  border-radius: 999px;
+  color: #fff;
+  flex-shrink: 0;
+}
+
+.verdict-chip-fail {
+  background: var(--error);
+}
+
+.verdict-chip-flag {
+  background: var(--warn);
+}
+
+.verdict-chip-pass {
+  background: var(--accent);
+}
+
+.audit-quotes {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.audit-quote {
+  display: block;
+  text-align: left;
+  font-size: 0.78rem;
+  font-style: italic;
+  font-family: inherit;
+  color: var(--text);
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 0.3rem 0.5rem;
+  cursor: pointer;
+  width: 100%;
+}
+
+.audit-quote:hover:not(:disabled) {
+  border-color: var(--accent);
+}
+
+.audit-quote-stale {
+  color: var(--text-muted);
+  cursor: default;
+  background: var(--panel-bg);
+}
+
+.stale-hint {
+  font-style: normal;
+  font-size: 0.7rem;
+}
+
+/* ---- status strip ---------------------------------------------------------------- */
+
+.status-strip {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.4rem 1rem;
+  border-top: 1px solid var(--border);
+  background: var(--panel-bg);
+  font-size: 0.78rem;
+  color: var(--text-muted);
+}
+
+.status-sep {
+  width: 1px;
+  height: 1em;
+  background: var(--border);
+}
+
+.status-count-error {
+  color: var(--error);
+}
+
+.status-count-warn {
+  color: var(--warn);
+}
+
+.status-count-info {
+  color: var(--info);
+}
