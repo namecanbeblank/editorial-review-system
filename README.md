@@ -6,7 +6,7 @@ This is a portfolio staging copy of an MVP. Its example client and article are f
 
 ## Get the source
 
-Download and extract [editorial-review-source.zip](editorial-review-source.zip). It contains the app and engine source, the fictional example, and the lockfiles. Client data, dependencies, and build output are excluded.
+Browse the `app/` and `engine/` directories in this repository, or download and extract [editorial-review-source.zip](editorial-review-source.zip). The source includes a fictional example and the lockfiles. Client data, dependencies, and build output are excluded.
 
 ## Run locally
 
